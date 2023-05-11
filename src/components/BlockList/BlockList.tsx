@@ -67,7 +67,7 @@ const BlockList = () => {
                           draggableProps={provided.draggableProps}
                           dragHandleProps={provided.dragHandleProps}
                           isDragging={snapshot.isDragging}
-                          type={BlockType.NOTE}
+                          type={block.type}
                           content={block.content}
                           index={index}
                         />

@@ -23,6 +23,9 @@ const Block = (props: BlockProps) => {
   const { setBlocks } = React.useContext(BlockContext);
 
   const [isHovered, setIsHovered] = React.useState(false);
+
+  const blockRef = React.useRef<HTMLDivElement>(null);
+
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -50,6 +53,12 @@ const Block = (props: BlockProps) => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+
+  React.useEffect(() => {
+    if (blockRef.current) {
+      blockRef.current.focus();
+    }
+  }, []);
 
   return (
     <div ref={props.innerRef} {...props.draggableProps}>
@@ -99,16 +108,18 @@ const Block = (props: BlockProps) => {
             </div>
           </div>
           <div
+            ref={blockRef}
             style={{
               border: 'red 1px solid',
               padding: '10px',
               width: '100%',
 
-              fontSize: type === 'title' ? '1rem' : '2rem',
+              fontSize: '1.5rem',
             }}
             contentEditable={true}
             onBlur={(e) => handleInput(e.currentTarget.textContent)}
             suppressContentEditableWarning={true}
+            data-placeholder={type.toUpperCase()}
           >
             {props.content}
           </div>

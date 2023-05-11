@@ -27,6 +27,10 @@ export default function GlobalStyles() {
           width: '100%',
           height: '100%',
         },
+        '[data-placeholder]:empty:before': {
+          content: 'attr(data-placeholder)',
+          color: '#888',
+        },
         input: {
           '&[type=number]': {
             MozAppearance: 'textfield',
