@@ -50,7 +50,7 @@ const DarkModeSwitch = () => {
     >
       <StyledRound
         sx={{
-          transform: (theme) => (theme.palette.mode === 'dark' ? 'translate(0px)' : 'translate(22.5px) scale(1.01, 1)'),
+          transform: (theme) => (theme.palette.mode === 'dark' ? 'translate(22.5px) scale(1.01, 1)' : 'translate(0px)'),
         }}
       />
       <HiSun style={{ ...switchIconStyle, left: '6px' }} />

@@ -6,6 +6,8 @@ import { FiCopy } from 'react-icons/fi';
 import { SimpleDialogContext } from '../../context/SimpleDialogContext';
 import { useSnackbar } from 'notistack';
 import { BlockContext } from '../../context/BlockContext';
+import { Droppable } from 'react-beautiful-dnd';
+import { DroppableZone } from '../../constants/dragDrop';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -56,22 +58,30 @@ const Toolbar = () => {
         direction={'row'}
         sx={{ height: isListening ? '130px' : '60px', paddingX: isListening ? '20px' : '0px' }}
       >
-        <StyledButton
-          disabled={isListening}
-          onClick={() =>
-            openSimpleDialog(
-              'Title !',
-              'test de confirmation',
-              () => {},
-              () => {
-                setBlocks({ type: 'reset' });
-              },
-            )
-          }
-          sx={{ ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.warning.main}` } }}
-        >
-          <BsTrash />
-        </StyledButton>
+        {' '}
+        <Droppable droppableId={DroppableZone.TRASH}>
+          {(provided, snapshot) => (
+            <StyledButton
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              //style={getListStyle(snapshot.isDraggingOver)}
+              disabled={isListening}
+              onClick={() =>
+                openSimpleDialog(
+                  'Title !',
+                  'test de confirmation',
+                  () => {},
+                  () => {
+                    setBlocks({ type: 'reset' });
+                  },
+                )
+              }
+              sx={{ ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.warning.main}` } }}
+            >
+              <BsTrash />
+            </StyledButton>
+          )}
+        </Droppable>
         <StyledButton
           onClick={() => setIsListening(!isListening)}
           sx={{

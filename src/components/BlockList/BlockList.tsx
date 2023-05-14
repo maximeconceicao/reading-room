@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Container, Stack } from '@mui/system';
 import { styled } from '@mui/material/styles';
 import Block from '../Block';
-import { DragDropContext, Droppable, Draggable, NotDraggingStyle, DraggingStyle } from 'react-beautiful-dnd';
+import { Droppable, Draggable, NotDraggingStyle, DraggingStyle } from 'react-beautiful-dnd';
 import { BlockType } from '../../constants/block';
 import { BlockContext } from '../../context/BlockContext';
 import { CircularProgress } from '@mui/material';
+import { DroppableZone } from '../../constants/dragDrop';
 
 const StyledStack = styled(Stack)(({}) => ({
   border: 'red 1px solid',
@@ -38,47 +39,34 @@ const getListStyle = (isDraggingOver: boolean) => ({
 });
 
 const BlockList = () => {
-  const { blocks, setBlocks } = React.useContext(BlockContext);
-
-  const onDragEnd = (result: any) => {
-    // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
-
-    setBlocks({ type: 'reorder', startIndex: result.source.index, endIndex: result.destination.index });
-  };
-
-  console.log('ITEMs', blocks);
+  const { blocks } = React.useContext(BlockContext);
 
   return (
     <Container>
       {blocks ? (
         <StyledStack direction="column" alignItems="center" justifyContent="space-between">
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
-              {(provided, snapshot) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-                  {blocks.map((block: any, index: number) => (
-                    <Draggable key={block.id} draggableId={block.id} index={index}>
-                      {(provided, snapshot) => (
-                        <Block
-                          innerRef={provided.innerRef}
-                          draggableProps={provided.draggableProps}
-                          dragHandleProps={provided.dragHandleProps}
-                          isDragging={snapshot.isDragging}
-                          type={block.type}
-                          content={block.content}
-                          index={index}
-                        />
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <Droppable droppableId={DroppableZone.BLOCK_LIST}>
+            {(provided, snapshot) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+                {blocks.map((block: any, index: number) => (
+                  <Draggable key={block.id} draggableId={block.id} index={index}>
+                    {(provided, snapshot) => (
+                      <Block
+                        innerRef={provided.innerRef}
+                        draggableProps={provided.draggableProps}
+                        dragHandleProps={provided.dragHandleProps}
+                        isDragging={snapshot.isDragging}
+                        type={block.type}
+                        content={block.content}
+                        index={index}
+                      />
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </StyledStack>
       ) : (
         <CircularProgress />
