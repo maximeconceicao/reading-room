@@ -1,5 +1,5 @@
 import endpoint from './endpoint';
-import { INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE } from '../constants/vosk';
+import { INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE } from '../constants/speechToText';
 
 // Extend Window with
 declare global {
@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-export interface VoskServiceConfig {
+export interface SpeechToTextServiceConfig {
   server: string;
   onReadyForSpeech: Function;
   onEndOfSpeech: Function;
@@ -28,8 +28,8 @@ const ABNORMAL_CLOSE_CODE = 1006;
 
 let isPaused = false;
 
-export class VoskService {
-  config: VoskServiceConfig;
+export class SpeechToTextService {
+  config: SpeechToTextServiceConfig;
   isEndOfFile: boolean;
   isWsOpen: boolean;
   webSocket: WebSocket | null;
@@ -37,7 +37,7 @@ export class VoskService {
   worklet: AudioWorkletNode | null;
   audioSource: MediaStreamAudioSourceNode | null;
 
-  constructor(config: Partial<VoskServiceConfig>) {
+  constructor(config: Partial<SpeechToTextServiceConfig>) {
     this.config = {
       server: config.server || SERVER_URL,
       onReadyForSpeech: config.onReadyForSpeech || function () {},

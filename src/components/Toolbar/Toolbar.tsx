@@ -8,8 +8,8 @@ import { useSnackbar } from 'notistack';
 import { BlockContext } from '../../context/BlockContext';
 import { Droppable } from 'react-beautiful-dnd';
 import { DroppableZone } from '../../constants/dragDrop';
-import { SocketStatus } from '../../constants/vosk';
-import { VoskService, VoskServiceConfig } from '../../services/VoskService';
+import { SocketStatus } from '../../constants/speechToText';
+import { SpeechToTextService, SpeechToTextServiceConfig } from '../../services/SpeechToTextService';
 import EndPoints from '../../services/endpoint';
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -65,18 +65,18 @@ const Toolbar = () => {
   const [resultText, setResultText] = React.useState('');
   const [socketStatus, setSocketStatus] = React.useState<string>(SocketStatus.START);
   const [isReadOnly, setIsReadOnly] = React.useState<boolean>();
-  const [isVoskServiceRunning, setIsVoskServiceRunning] = React.useState<boolean>(false);
+  const [isSpeechToTextServiceRunning, setIsSpeechToTextServiceRunning] = React.useState<boolean>(false);
 
-  const voskServiceConfig: VoskServiceConfig = {
+  const speechToTextServiceConfig: SpeechToTextServiceConfig = {
     server: EndPoints.SOCKET_BASE_URL,
 
     onReadyForSpeech: () => {
-      setIsVoskServiceRunning(true);
+      setIsSpeechToTextServiceRunning(true);
       console.log('VOSK SERVICE READY !');
     },
 
     onEndOfSpeech: () => {
-      setIsVoskServiceRunning(false);
+      setIsSpeechToTextServiceRunning(false);
     },
 
     onResults: (result: string) => {
@@ -97,7 +97,7 @@ const Toolbar = () => {
     },
   };
 
-  const voskService = new VoskService(voskServiceConfig);
+  const speechToTextService = new SpeechToTextService(speechToTextServiceConfig);
 
   const startRecording = () => {
     setIsReadOnly(true);
@@ -105,33 +105,33 @@ const Toolbar = () => {
     setResultText('');
     setPartialText('');
 
-    if (!voskService.isInitialized()) {
-      voskService.start();
-    } else if (voskService.isRunning()) {
-      voskService.resume();
+    if (!speechToTextService.isInitialized()) {
+      speechToTextService.start();
+    } else if (speechToTextService.isRunning()) {
+      speechToTextService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     } else {
-      voskService.pause();
+      speechToTextService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const pauseRecording = () => {
     if (socketStatus === SocketStatus.LISTENING) {
-      voskService.pause();
+      speechToTextService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const resumeRecording = () => {
-    if (!voskService.isRunning() && socketStatus === SocketStatus.PAUSE) {
-      voskService.resume();
+    if (!speechToTextService.isRunning() && socketStatus === SocketStatus.PAUSE) {
+      speechToTextService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     }
   };
 
   const stopRecording = () => {
-    voskService.stop();
+    speechToTextService.stop();
 
     setSocketStatus(SocketStatus.START);
     setIsReadOnly(false);

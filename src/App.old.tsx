@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from 'react';
 import './App.css';
-import { VoskServiceConfig, VoskService } from './services/VoskService';
+import { SpeechToTextServiceConfig, SpeechToTextService } from './services/SpeechToTextService';
 import EndPoints from './services/endpoint';
-import { SocketStatus } from './constants/vosk';
+import { SocketStatus } from './constants/speechToText';
 import { BsFillPauseFill, BsMicFill, BsFillStopFill, BsFillTrashFill } from 'react-icons/bs';
 
 function App() {
@@ -10,17 +10,17 @@ function App() {
   const [resultText, setResultText] = useState('');
   const [socketStatus, setSocketStatus] = useState<string>(SocketStatus.START);
   const [isReadOnly, setIsReadOnly] = useState<boolean>();
-  const [isVoskServiceRunning, setIsVoskServiceRunning] = useState<boolean>(false);
+  const [isSpeechToTextServiceRunning, setIsSpeechToTextServiceRunning] = useState<boolean>(false);
 
-  const voskServiceConfig: VoskServiceConfig = {
+  const speechToTextServiceConfig: SpeechToTextServiceConfig = {
     server: EndPoints.SOCKET_BASE_URL,
 
     onReadyForSpeech: () => {
-      setIsVoskServiceRunning(true);
+      setIsSpeechToTextServiceRunning(true);
     },
 
     onEndOfSpeech: () => {
-      setIsVoskServiceRunning(false);
+      setIsSpeechToTextServiceRunning(false);
     },
 
     onResults: (result: string) => {
@@ -41,7 +41,7 @@ function App() {
     },
   };
 
-  const voskService = new VoskService(voskServiceConfig);
+  const speechToTextService = new SpeechToTextService(speechToTextServiceConfig);
 
   const startRecording = () => {
     setIsReadOnly(true);
@@ -49,33 +49,33 @@ function App() {
     setResultText('');
     setPartialText('');
 
-    if (!voskService.isInitialized()) {
-      voskService.start();
-    } else if (voskService.isRunning()) {
-      voskService.resume();
+    if (!speechToTextService.isInitialized()) {
+      speechToTextService.start();
+    } else if (speechToTextService.isRunning()) {
+      speechToTextService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     } else {
-      voskService.pause();
+      speechToTextService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const pauseRecording = () => {
     if (socketStatus === SocketStatus.LISTENING) {
-      voskService.pause();
+      speechToTextService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const resumeRecording = () => {
-    if (!voskService.isRunning() && socketStatus === SocketStatus.PAUSE) {
-      voskService.resume();
+    if (!speechToTextService.isRunning() && socketStatus === SocketStatus.PAUSE) {
+      speechToTextService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     }
   };
 
   const stopRecording = () => {
-    voskService.stop();
+    speechToTextService.stop();
 
     setSocketStatus(SocketStatus.START);
     setIsReadOnly(false);
@@ -169,7 +169,7 @@ function App() {
           </button>
         </div>
       </div>
-      <h4 className="info">WS Connection : {isVoskServiceRunning ? '✅' : '😴'}</h4>
+      <h4 className="info">WS Connection : {isSpeechToTextServiceRunning ? '✅' : '😴'}</h4>
     </div>
   );
 }
