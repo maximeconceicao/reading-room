@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import './App.css';
 import { VoskServiceConfig, VoskService } from './services/VoskService';
 import EndPoints from './services/endpoint';
-import { SocketStatus } from './constants/constants';
+import { SocketStatus } from './constants/vosk';
 import { BsFillPauseFill, BsMicFill, BsFillStopFill, BsFillTrashFill } from 'react-icons/bs';
 
 function App() {

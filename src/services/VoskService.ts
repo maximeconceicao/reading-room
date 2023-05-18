@@ -1,5 +1,5 @@
 import endpoint from './endpoint';
-import { INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE } from '../constants/constants';
+import { INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE } from '../constants/vosk';
 
 // Extend Window with
 declare global {
