@@ -8,7 +8,7 @@ type State = {
 };
 
 type Action =
-  | { type: 'add'; index: number; blockType: BlockType }
+  | { type: 'add'; blockType: BlockType; index?: number; content?: string }
   | { type: 'remove'; index: number }
   | { type: 'reorder'; startIndex: number; endIndex: number }
   | { type: 'setContent'; index: number; content: string | null }
@@ -38,18 +38,18 @@ const localStorageData = localStorage.getItem('Blocks');
 
 const initialState = localStorageData ? { blocks: JSON.parse(localStorageData) } : defaultState;
 
-console.log('INITIAL STATE:', initialState);
-
 const reducer: React.Reducer<State, Action> = (state, action) => {
   let updatedBlocks;
   switch (action.type) {
     case 'add':
       updatedBlocks = [...state.blocks];
-      updatedBlocks.splice(action.index + 1, 0, {
+      const newBlock = {
         id: new Date().valueOf().toString(),
         type: action.blockType,
-        content: '',
-      });
+        content: action.content ?? '',
+      };
+      if (action.index) updatedBlocks.splice(action.index + 1, 0, newBlock);
+      else updatedBlocks.push(newBlock);
       break;
     case 'remove':
       updatedBlocks = [...state.blocks];

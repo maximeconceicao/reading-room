@@ -8,9 +8,9 @@ import { useSnackbar } from 'notistack';
 import { BlockContext } from '../../context/BlockContext';
 import { Droppable } from 'react-beautiful-dnd';
 import { DroppableZone } from '../../constants/dragDrop';
-import { SocketStatus } from '../../constants/speechToText';
-import { SpeechToTextService, SpeechToTextServiceConfig } from '../../services/SpeechToTextService';
-import EndPoints from '../../services/endpoint';
+import { CommandKeyword, SERVER_URL, SocketStatus } from '../../constants/transcription';
+import { TranscriptionService, TranscriptionServiceConfig } from '../../services/TranscriptionService';
+import { BlockType } from '../../constants/block';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -65,24 +65,30 @@ const Toolbar = () => {
   const [resultText, setResultText] = React.useState('');
   const [socketStatus, setSocketStatus] = React.useState<string>(SocketStatus.START);
   const [isReadOnly, setIsReadOnly] = React.useState<boolean>();
-  const [isSpeechToTextServiceRunning, setIsSpeechToTextServiceRunning] = React.useState<boolean>(false);
+  const [isTranscriptionServiceRunning, setIsTranscriptionServiceRunning] = React.useState<boolean>(false);
+  const [isBlockBeingWritten, setIsBlockBeingWritten] = React.useState<boolean>(false);
 
-  const speechToTextServiceConfig: SpeechToTextServiceConfig = {
-    server: EndPoints.SOCKET_BASE_URL,
+  React.useEffect(() => {
+    console.log('ISBLOCKBEING ', isBlockBeingWritten);
+  }, [isBlockBeingWritten]);
+
+  const transcriptionServiceConfig: TranscriptionServiceConfig = {
+    server: SERVER_URL,
 
     onReadyForSpeech: () => {
-      setIsSpeechToTextServiceRunning(true);
+      setIsTranscriptionServiceRunning(true);
       console.log('VOSK SERVICE READY !');
     },
 
     onEndOfSpeech: () => {
-      setIsSpeechToTextServiceRunning(false);
+      setIsTranscriptionServiceRunning(false);
     },
 
     onResults: (result: string) => {
       console.log('ON RESULTS : ', result);
       setPartialText('');
       addResult(result);
+      handleResult(result);
     },
     onPartialResults: (partial: any) => {
       console.log('ON PARTIAL : ', partial);
@@ -97,7 +103,7 @@ const Toolbar = () => {
     },
   };
 
-  const speechToTextService = new SpeechToTextService(speechToTextServiceConfig);
+  const transcriptionService = new TranscriptionService(transcriptionServiceConfig);
 
   const startRecording = () => {
     setIsReadOnly(true);
@@ -105,33 +111,33 @@ const Toolbar = () => {
     setResultText('');
     setPartialText('');
 
-    if (!speechToTextService.isInitialized()) {
-      speechToTextService.start();
-    } else if (speechToTextService.isRunning()) {
-      speechToTextService.resume();
+    if (!transcriptionService.isInitialized()) {
+      transcriptionService.start();
+    } else if (transcriptionService.isRunning()) {
+      transcriptionService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     } else {
-      speechToTextService.pause();
+      transcriptionService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const pauseRecording = () => {
     if (socketStatus === SocketStatus.LISTENING) {
-      speechToTextService.pause();
+      transcriptionService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const resumeRecording = () => {
-    if (!speechToTextService.isRunning() && socketStatus === SocketStatus.PAUSE) {
-      speechToTextService.resume();
+    if (!transcriptionService.isRunning() && socketStatus === SocketStatus.PAUSE) {
+      transcriptionService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     }
   };
 
   const stopRecording = () => {
-    speechToTextService.stop();
+    transcriptionService.stop();
 
     setSocketStatus(SocketStatus.START);
     setIsReadOnly(false);
@@ -174,6 +180,22 @@ const Toolbar = () => {
     setResultText(target.value);
   };
 
+  const handleResult = (result: string) => {
+    console.log('WTFFF', isBlockBeingWritten);
+    if (isBlockBeingWritten) {
+      console.log('IF');
+      if (Object.values(CommandKeyword).includes(result)) {
+        console.log("LET'S GO ! ", result);
+        setIsBlockBeingWritten(true);
+      }
+    } else {
+      console.log('ELSE ???');
+      setBlocks({ type: 'add', blockType: BlockType.NOTE, content: result });
+      setResultText('');
+      setIsBlockBeingWritten(false);
+    }
+  };
+
   return (
     <StyledBox>
       <StyledStack direction={'column'} sx={{ height: isListening ? '130px' : '60px' }}>
@@ -197,8 +219,8 @@ const Toolbar = () => {
                 disabled={isListening}
                 onClick={() =>
                   openSimpleDialog(
-                    'Title !',
-                    'test de confirmation',
+                    '/!\\',
+                    'Are you sure you want to delete all of your notes?',
                     () => {},
                     () => {
                       setBlocks({ type: 'reset' });
@@ -215,6 +237,9 @@ const Toolbar = () => {
             onClick={() => {
               if (socketStatus === SocketStatus.START) {
                 startRecording();
+              }
+              if (socketStatus === SocketStatus.LISTENING) {
+                pauseRecording();
               }
               if (socketStatus === SocketStatus.PAUSE) {
                 resumeRecording();
@@ -233,7 +258,7 @@ const Toolbar = () => {
           </StyledButton>
           <StyledButton
             disabled={isListening}
-            onClick={() => enqueueSnackbar('copied !', { variant: 'info' })}
+            onClick={() => enqueueSnackbar('Notes copied to Clipboard !', { variant: 'info' })}
             sx={{ ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.success.main}` } }}
           >
             <FiCopy />

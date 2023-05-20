@@ -1,5 +1,11 @@
-import endpoint from './endpoint';
-import { INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE } from '../constants/speechToText';
+import {
+  INPUT_SAMPLE_RATE,
+  OUTPUT_SAMPLE_RATE,
+  SERVER_URL,
+  WORKLET_NAME,
+  WORKLET_PATH,
+  ABNORMAL_CLOSE_CODE,
+} from '../constants/transcription';
 
 // Extend Window with
 declare global {
@@ -8,7 +14,7 @@ declare global {
   }
 }
 
-export interface SpeechToTextServiceConfig {
+export interface TranscriptionServiceConfig {
   server: string;
   onReadyForSpeech: Function;
   onEndOfSpeech: Function;
@@ -19,17 +25,10 @@ export interface SpeechToTextServiceConfig {
   onError: Function;
 }
 
-const SERVER_URL = endpoint.SOCKET_BASE_URL;
-
-const WORKLET_PATH = 'worklet/resampling-audio-processor.js';
-const WORKLET_NAME = 'resampling-audio-processor';
-
-const ABNORMAL_CLOSE_CODE = 1006;
-
 let isPaused = false;
 
-export class SpeechToTextService {
-  config: SpeechToTextServiceConfig;
+export class TranscriptionService {
+  config: TranscriptionServiceConfig;
   isEndOfFile: boolean;
   isWsOpen: boolean;
   webSocket: WebSocket | null;
@@ -37,7 +36,7 @@ export class SpeechToTextService {
   worklet: AudioWorkletNode | null;
   audioSource: MediaStreamAudioSourceNode | null;
 
-  constructor(config: Partial<SpeechToTextServiceConfig>) {
+  constructor(config: Partial<TranscriptionServiceConfig>) {
     this.config = {
       server: config.server || SERVER_URL,
       onReadyForSpeech: config.onReadyForSpeech || function () {},

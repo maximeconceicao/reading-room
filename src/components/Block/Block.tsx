@@ -17,6 +17,30 @@ interface BlockProps {
   index: number;
 }
 
+const getStyleByBlockType = (blockType: BlockType) => {
+  switch (blockType) {
+    case BlockType.TITLE:
+      return {
+        fontSize: '2rem',
+        fontWeight: '600',
+      };
+    case BlockType.SUBTITLE:
+      return {
+        fontSize: '1.5rem',
+        fontWeight: '600',
+      };
+    case BlockType.NOTE:
+      return {
+        fontSize: '1rem',
+      };
+    case BlockType.QUOTE:
+      return {
+        fontSize: '1rem',
+        fontStyle: 'italic',
+      };
+  }
+};
+
 const Block = (props: BlockProps) => {
   const { type, isDragging, index } = props;
 
@@ -114,7 +138,7 @@ const Block = (props: BlockProps) => {
               padding: '10px',
               width: '100%',
 
-              fontSize: '1.5rem',
+              ...getStyleByBlockType(type),
             }}
             contentEditable={true}
             onBlur={(e) => handleInput(e.currentTarget.textContent)}

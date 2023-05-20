@@ -1,8 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import './App.css';
-import { SpeechToTextServiceConfig, SpeechToTextService } from './services/SpeechToTextService';
-import EndPoints from './services/endpoint';
-import { SocketStatus } from './constants/speechToText';
+import { TranscriptionServiceConfig, TranscriptionService } from './services/TranscriptionService';
+import { SERVER_URL, SocketStatus } from './constants/transcription';
 import { BsFillPauseFill, BsMicFill, BsFillStopFill, BsFillTrashFill } from 'react-icons/bs';
 
 function App() {
@@ -10,17 +9,17 @@ function App() {
   const [resultText, setResultText] = useState('');
   const [socketStatus, setSocketStatus] = useState<string>(SocketStatus.START);
   const [isReadOnly, setIsReadOnly] = useState<boolean>();
-  const [isSpeechToTextServiceRunning, setIsSpeechToTextServiceRunning] = useState<boolean>(false);
+  const [isTranscriptionServiceRunning, setIsTranscriptionServiceRunning] = useState<boolean>(false);
 
-  const speechToTextServiceConfig: SpeechToTextServiceConfig = {
-    server: EndPoints.SOCKET_BASE_URL,
+  const transcriptionServiceConfig: TranscriptionServiceConfig = {
+    server: SERVER_URL,
 
     onReadyForSpeech: () => {
-      setIsSpeechToTextServiceRunning(true);
+      setIsTranscriptionServiceRunning(true);
     },
 
     onEndOfSpeech: () => {
-      setIsSpeechToTextServiceRunning(false);
+      setIsTranscriptionServiceRunning(false);
     },
 
     onResults: (result: string) => {
@@ -41,7 +40,7 @@ function App() {
     },
   };
 
-  const speechToTextService = new SpeechToTextService(speechToTextServiceConfig);
+  const transcriptionService = new TranscriptionService(transcriptionServiceConfig);
 
   const startRecording = () => {
     setIsReadOnly(true);
@@ -49,33 +48,33 @@ function App() {
     setResultText('');
     setPartialText('');
 
-    if (!speechToTextService.isInitialized()) {
-      speechToTextService.start();
-    } else if (speechToTextService.isRunning()) {
-      speechToTextService.resume();
+    if (!transcriptionService.isInitialized()) {
+      transcriptionService.start();
+    } else if (transcriptionService.isRunning()) {
+      transcriptionService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     } else {
-      speechToTextService.pause();
+      transcriptionService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const pauseRecording = () => {
     if (socketStatus === SocketStatus.LISTENING) {
-      speechToTextService.pause();
+      transcriptionService.pause();
       setSocketStatus(SocketStatus.PAUSE);
     }
   };
 
   const resumeRecording = () => {
-    if (!speechToTextService.isRunning() && socketStatus === SocketStatus.PAUSE) {
-      speechToTextService.resume();
+    if (!transcriptionService.isRunning() && socketStatus === SocketStatus.PAUSE) {
+      transcriptionService.resume();
       setSocketStatus(SocketStatus.LISTENING);
     }
   };
 
   const stopRecording = () => {
-    speechToTextService.stop();
+    transcriptionService.stop();
 
     setSocketStatus(SocketStatus.START);
     setIsReadOnly(false);
@@ -169,7 +168,7 @@ function App() {
           </button>
         </div>
       </div>
-      <h4 className="info">WS Connection : {isSpeechToTextServiceRunning ? '✅' : '😴'}</h4>
+      <h4 className="info">WS Connection : {isTranscriptionServiceRunning ? '✅' : '😴'}</h4>
     </div>
   );
 }
