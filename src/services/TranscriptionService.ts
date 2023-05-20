@@ -1,3 +1,4 @@
+import { BlockType } from './../constants/block';
 import {
   INPUT_SAMPLE_RATE,
   OUTPUT_SAMPLE_RATE,
@@ -5,6 +6,7 @@ import {
   WORKLET_NAME,
   WORKLET_PATH,
   ABNORMAL_CLOSE_CODE,
+  CommandKeyword,
 } from '../constants/transcription';
 
 // Extend Window with
@@ -19,6 +21,7 @@ export interface TranscriptionServiceConfig {
   onReadyForSpeech: Function;
   onEndOfSpeech: Function;
   onResults: Function;
+  onCommand: Function;
   onPartialResults: Function;
   onEndOfSession?: Function;
   onEvent: Function;
@@ -31,6 +34,8 @@ export class TranscriptionService {
   config: TranscriptionServiceConfig;
   isEndOfFile: boolean;
   isWsOpen: boolean;
+  isBlockBeingWritten: boolean;
+  lastCommand: BlockType;
   webSocket: WebSocket | null;
   audioContext: AudioContext | null;
   worklet: AudioWorkletNode | null;
@@ -42,6 +47,7 @@ export class TranscriptionService {
       onReadyForSpeech: config.onReadyForSpeech || function () {},
       onEndOfSpeech: config.onEndOfSpeech || function () {},
       onResults: config.onResults || function (data: any) {},
+      onCommand: config.onCommand || function (data: any) {},
       onPartialResults: config.onPartialResults || function (data: any) {},
       onEndOfSession: config.onEndOfSession || function () {},
       onEvent: config.onEvent || function (e: any, data: any) {},
@@ -53,6 +59,8 @@ export class TranscriptionService {
     this.audioContext = null;
     this.worklet = null;
     this.audioSource = null;
+    this.isBlockBeingWritten = false;
+    this.lastCommand = BlockType.NOTE;
   }
 
   async start() {
@@ -90,7 +98,16 @@ export class TranscriptionService {
         this.config.onPartialResults(_getLastThreeWords(parsed.partial));
       }
       if (parsed.result) {
-        this.config.onResults(parsed.text);
+        if (this.isBlockBeingWritten) {
+          this.config.onResults(this.lastCommand, parsed.text);
+          this.isBlockBeingWritten = false;
+        } else {
+          if (Object.values(CommandKeyword).includes(parsed.text)) {
+            this.config.onCommand(parsed.text);
+            this.lastCommand = parsed.text;
+            this.isBlockBeingWritten = true;
+          }
+        }
       }
     };
 

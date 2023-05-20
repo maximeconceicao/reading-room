@@ -66,11 +66,6 @@ const Toolbar = () => {
   const [socketStatus, setSocketStatus] = React.useState<string>(SocketStatus.START);
   const [isReadOnly, setIsReadOnly] = React.useState<boolean>();
   const [isTranscriptionServiceRunning, setIsTranscriptionServiceRunning] = React.useState<boolean>(false);
-  const [isBlockBeingWritten, setIsBlockBeingWritten] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    console.log('ISBLOCKBEING ', isBlockBeingWritten);
-  }, [isBlockBeingWritten]);
 
   const transcriptionServiceConfig: TranscriptionServiceConfig = {
     server: SERVER_URL,
@@ -84,11 +79,14 @@ const Toolbar = () => {
       setIsTranscriptionServiceRunning(false);
     },
 
-    onResults: (result: string) => {
-      console.log('ON RESULTS : ', result);
+    onResults: (command: BlockType, result: string) => {
+      console.log('ON RESULTS : ', result, command);
       setPartialText('');
-      addResult(result);
-      handleResult(result);
+      // addResult(result);
+      setBlocks({ type: 'add', blockType: command, content: result });
+    },
+    onCommand: (command: BlockType) => {
+      console.log('ON COMMAND : ', command);
     },
     onPartialResults: (partial: any) => {
       console.log('ON PARTIAL : ', partial);
@@ -173,27 +171,6 @@ const Toolbar = () => {
       classes += ' listening';
     }
     return classes;
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const target = event.target as HTMLTextAreaElement;
-    setResultText(target.value);
-  };
-
-  const handleResult = (result: string) => {
-    console.log('WTFFF', isBlockBeingWritten);
-    if (isBlockBeingWritten) {
-      console.log('IF');
-      if (Object.values(CommandKeyword).includes(result)) {
-        console.log("LET'S GO ! ", result);
-        setIsBlockBeingWritten(true);
-      }
-    } else {
-      console.log('ELSE ???');
-      setBlocks({ type: 'add', blockType: BlockType.NOTE, content: result });
-      setResultText('');
-      setIsBlockBeingWritten(false);
-    }
   };
 
   return (
