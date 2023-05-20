@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { Box, Stack, styled, Theme } from '@mui/system';
 import * as React from 'react';
 import { BsMic, BsTrash } from 'react-icons/bs';
@@ -11,6 +11,7 @@ import { DroppableZone } from '../../constants/dragDrop';
 import { CommandKeyword, SERVER_URL, SocketStatus } from '../../constants/transcription';
 import { TranscriptionService, TranscriptionServiceConfig } from '../../services/TranscriptionService';
 import { BlockType } from '../../constants/block';
+import ListeningAnimation from '../ListeningAnimation';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -52,6 +53,10 @@ const StyledButton = styled(Button)(({ theme }) => ({
   ':hover': { backgroundColor: 'gray' },
 }));
 
+const capitalizeFirstLetter = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
 const Toolbar = () => {
   const [isListening, setIsListening] = React.useState(false);
 
@@ -83,7 +88,7 @@ const Toolbar = () => {
       console.log('ON RESULTS : ', result, command);
       setPartialText('');
       // addResult(result);
-      setBlocks({ type: 'add', blockType: command, content: result });
+      setBlocks({ type: 'add', blockType: command, content: capitalizeFirstLetter(result) });
     },
     onCommand: (command: BlockType) => {
       console.log('ON COMMAND : ', command);
@@ -150,41 +155,30 @@ const Toolbar = () => {
     setPartialText('');
   };
 
-  const getStatusInfo = () => {
-    if (socketStatus === SocketStatus.START) {
-      return 'Ready to start !';
-    }
-    if (socketStatus === SocketStatus.LISTENING) {
-      return 'Listening...';
-    }
-    if (socketStatus === SocketStatus.PAUSE) {
-      return 'Pause';
-    }
-  };
-
-  const getStatusDotClasses = () => {
-    let classes = 'status-dot';
-    if (socketStatus !== SocketStatus.START) {
-      classes += ' active';
-    }
-    if (socketStatus === SocketStatus.LISTENING) {
-      classes += ' listening';
-    }
-    return classes;
-  };
-
   return (
     <StyledBox>
-      <StyledStack direction={'column'} sx={{ height: isListening ? '130px' : '60px' }}>
+      <StyledStack direction={'column'} sx={{ height: isListening ? '150px' : '60px' }}>
         <Box
           sx={{
-            height: isListening ? '60px' : '0px',
+            height: isListening ? '80px' : '0px',
+            paddingTop: isListening ? '0px' : '0px',
             visibility: isListening ? 'visible' : 'hidden',
             color: isListening ? 'black' : 'white',
-            transition: 'all .3s, transform .3s',
+            transition: 'all .3s',
           }}
         >
-          <p>{partialText}</p>
+          <Box
+            sx={{
+              opacity: isListening ? '1' : '0',
+              transition: isListening ? 'all .5s' : 'all .1s',
+            }}
+          >
+            <Typography sx={{ marginTop: '10px', marginBottom: '15px', height: '24px' }}>
+              {partialText ? partialText : 'listening...'}
+            </Typography>
+
+            <ListeningAnimation />
+          </Box>
         </Box>
         <StyledStackToolbar direction={'row'} sx={{ paddingX: isListening ? '20px' : '0px' }}>
           <Droppable droppableId={DroppableZone.TRASH}>
@@ -219,6 +213,7 @@ const Toolbar = () => {
                 pauseRecording();
               }
               if (socketStatus === SocketStatus.PAUSE) {
+                setPartialText('');
                 resumeRecording();
               }
               setIsListening(!isListening);
