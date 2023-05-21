@@ -52,7 +52,7 @@ const ListeningAnimation = () => {
     <Loader>
       <Dot sx={{ animationDelay: '0s', WebkitAnimationDelay: '0s' }} />
       <Dot sx={{ animationDelay: '0.3s', WebkitAnimationDelay: '0.3s' }} />
-      <Dot sx={{ animationDelay: '0.6s', WebkitAnimationDelay: '0.9s' }} />
+      <Dot sx={{ animationDelay: '0.6s', WebkitAnimationDelay: '0.6s' }} />
       <Dot sx={{ animationDelay: '0.9s', WebkitAnimationDelay: '0.9s' }} />
       <Dot sx={{ animationDelay: '1.2s', WebkitAnimationDelay: '1.2s' }} />
     </Loader>

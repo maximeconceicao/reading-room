@@ -83,6 +83,7 @@ const BlockSelectionPopover = (props: BlockSelectionPopoverProps) => {
                 borderRadius: '3px',
                 boxShadow: 'rgba(15, 15, 15, 0.1) 0px 0px 0px 1px',
                 backgroundColor: '#EEEEEE',
+                color: '#000000',
               }}
             >
               <IconContext.Provider value={{ size: '22' }}>
@@ -90,7 +91,9 @@ const BlockSelectionPopover = (props: BlockSelectionPopoverProps) => {
               </IconContext.Provider>
             </Box>
             <Box paddingLeft={2} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography textTransform={'capitalize'}>{type}</Typography>
+              <Typography textTransform={'capitalize'} color="black">
+                {type}
+              </Typography>
             </Box>
             <Box></Box>
           </Box>

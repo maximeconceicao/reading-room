@@ -64,7 +64,7 @@ const Toolbar = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const { setBlocks } = React.useContext(BlockContext);
+  const { blocks, setBlocks } = React.useContext(BlockContext);
 
   const [partialText, setPartialText] = React.useState('');
   const [resultText, setResultText] = React.useState('');
@@ -150,9 +150,31 @@ const Toolbar = () => {
     setResultText((prevResultText) => prevResultText + ' ' + result);
   };
 
-  const clearResults = () => {
-    setResultText('');
-    setPartialText('');
+  const copyToClipboard = () => {
+    const textToCopy = convertBlocksToMarkdown();
+    navigator.clipboard.writeText(textToCopy);
+    enqueueSnackbar('Notes copied to Clipboard !', { variant: 'info' });
+  };
+
+  const convertBlocksToMarkdown = () => {
+    let markdown = '';
+    for (let block of blocks) {
+      switch (block.type) {
+        case BlockType.TITLE:
+          markdown += '# ' + block.content + '\n\n';
+          break;
+        case BlockType.SUBTITLE:
+          markdown += '## ' + block.content + '\n\n';
+          break;
+        case BlockType.NOTE:
+          markdown += block.content + '\n\n';
+          break;
+        case BlockType.QUOTE:
+          markdown += '>*' + block.content + '* \n\n';
+          break;
+      }
+    }
+    return markdown;
   };
 
   return (
@@ -174,7 +196,7 @@ const Toolbar = () => {
             }}
           >
             <Typography sx={{ marginTop: '10px', marginBottom: '15px', height: '24px' }}>
-              {partialText ? partialText : 'listening...'}
+              {partialText ? partialText : <em>listening...</em>}
             </Typography>
 
             <ListeningAnimation />
@@ -230,7 +252,7 @@ const Toolbar = () => {
           </StyledButton>
           <StyledButton
             disabled={isListening}
-            onClick={() => enqueueSnackbar('Notes copied to Clipboard !', { variant: 'info' })}
+            onClick={() => copyToClipboard()}
             sx={{ ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.success.main}` } }}
           >
             <FiCopy />
