@@ -6,6 +6,8 @@ import { DraggableProvidedDraggableProps, DraggableProvidedDragHandleProps } fro
 import BlockSelectionPopover from '../BlockSelectionPopover';
 import { BlockType } from '../../constants/block';
 import { BlockContext } from '../../context/BlockContext';
+import { Box, Theme, useTheme } from '@mui/material';
+import { ThemeMode } from '../../constants/theme';
 
 interface BlockProps {
   type: BlockType;
@@ -15,6 +17,7 @@ interface BlockProps {
   content: string;
   innerRef: (element: HTMLElement | null) => void;
   index: number;
+  style: React.CSSProperties;
 }
 
 const getStyleByBlockType = (blockType: BlockType) => {
@@ -42,7 +45,9 @@ const getStyleByBlockType = (blockType: BlockType) => {
 };
 
 const Block = (props: BlockProps) => {
-  const { type, isDragging, index } = props;
+  const { type, isDragging, index, style } = props;
+
+  const theme = useTheme();
 
   const { setBlocks } = React.useContext(BlockContext);
 
@@ -76,7 +81,7 @@ const Block = (props: BlockProps) => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'simple-popover-' + index : undefined;
 
   React.useEffect(() => {
     if (blockRef.current) {
@@ -84,14 +89,30 @@ const Block = (props: BlockProps) => {
     }
   }, []);
 
+  const getBlockStyleByThemeMode = (themeMode: ThemeMode) => {
+    const style = { width: '100%', padding: '10px', borderRadius: '0px' };
+    if (themeMode === 'dark') {
+      return {
+        ...style,
+        backgroundColor: theme.palette.grey[700],
+        // border: theme.palette.grey[100] + ' 1px solid',
+      };
+    } else {
+      return {
+        ...style,
+        backgroundColor: theme.palette.grey[100],
+        //border: theme.palette.grey[800] + ' 1px solid',
+      };
+    }
+  };
+
   return (
-    <div ref={props.innerRef} {...props.draggableProps}>
+    <div ref={props.innerRef} {...props.draggableProps} style={style}>
       <div
         style={{
           position: 'relative',
           display: 'flex',
           justifyContent: 'center',
-          border: 'green 1px solid',
           width: '100%',
         }}
       >
@@ -106,7 +127,6 @@ const Block = (props: BlockProps) => {
               justifyContent: 'center',
               width: '40px',
               height: '100%',
-              color: 'red',
               opacity: isHovered && !isDragging ? '1' : '0',
               transition: 'all .2s',
             }}
@@ -131,14 +151,13 @@ const Block = (props: BlockProps) => {
               <RxDragHandleDots2 size={18} />
             </div>
           </div>
-          <div
+          <Box
             ref={blockRef}
-            style={{
-              border: 'red 1px solid',
-              padding: '10px',
-              width: '100%',
+            sx={{
+              ...getBlockStyleByThemeMode(theme.palette.mode),
 
               ...getStyleByBlockType(type),
+              opacity: isDragging ? '0.5' : '1',
             }}
             contentEditable={true}
             onBlur={(e) => handleInput(e.currentTarget.textContent)}
@@ -146,7 +165,7 @@ const Block = (props: BlockProps) => {
             data-placeholder={type.toUpperCase()}
           >
             {props.content}
-          </div>
+          </Box>
         </div>
         <div style={{ width: '40px', height: '100%' }}></div>
       </div>

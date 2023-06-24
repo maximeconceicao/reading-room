@@ -55,6 +55,6 @@ GO TO `live-transcribe-vue/src/views/Home.vue`
 
 ### START THE SERVER
 
-`docker run -d -p 2700:2700 alphacep/kaldi-fr:latest`
+docker run -d -p 2700:2700 alphacep/kaldi-fr:latest
 
 https://stackoverflow.com/questions/30031561/change-sample-rate-of-audiocontext-getusermedia

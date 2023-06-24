@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { HiSun, HiMoon } from 'react-icons/hi';
-import { useTheme } from '@mui/material/styles';
 import { ThemeModeContext } from '../../context/ThemeModeContext/ThemeModeContext';
-import { padding } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -25,8 +23,6 @@ const switchIconStyle = {
   height: '14px',
 } as React.CSSProperties;
 
-type ThemeMode = 'light' | 'dark';
-
 const StyledRound = styled('div')(({ theme }) => ({
   position: 'absolute',
   top: '10.3%',
@@ -39,7 +35,6 @@ const StyledRound = styled('div')(({ theme }) => ({
 }));
 
 const DarkModeSwitch = () => {
-  const theme = useTheme();
   const colorMode = React.useContext(ThemeModeContext);
 
   return (

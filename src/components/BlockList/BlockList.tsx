@@ -9,7 +9,6 @@ import { CircularProgress } from '@mui/material';
 import { DroppableZone } from '../../constants/dragDrop';
 
 const StyledStack = styled(Stack)(({}) => ({
-  border: 'red 1px solid',
   width: '100%',
   transition: 'all .3s, transform .3s',
 }));
@@ -23,11 +22,9 @@ const getItemStyle = (
   // some basic styles to make the items look a bit nicer
   // userSelect: 'none',
   // padding: grid * 2,
-  // margin: `0 0 ${grid}px 0`,
-
+  margin: `0 0 ${grid * 3}px 0`,
   // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
-
+  //background: isDragging ? 'lightgreen' : 'grey',
   // styles we need to apply on draggables
   ...draggableStyle,
 });
@@ -35,6 +32,7 @@ const getItemStyle = (
 const getListStyle = (isDraggingOver: boolean) => ({
   // background: isDraggingOver ? 'lightblue' : 'lightgrey',
   // padding: grid,
+  paddingTop: grid,
   width: '100%',
 });
 
@@ -59,6 +57,7 @@ const BlockList = () => {
                         type={block.type}
                         content={block.content}
                         index={index}
+                        style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                       />
                     )}
                   </Draggable>

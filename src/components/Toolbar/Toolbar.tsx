@@ -1,17 +1,17 @@
 import { Button, Typography } from '@mui/material';
 import { Box, Stack, styled, Theme } from '@mui/system';
 import * as React from 'react';
-import { BsMic, BsTrash } from 'react-icons/bs';
-import { FiCopy } from 'react-icons/fi';
+import { BsFillMicFill, BsFillTrashFill, BsSubtract } from 'react-icons/bs';
 import { SimpleDialogContext } from '../../context/SimpleDialogContext';
 import { useSnackbar } from 'notistack';
 import { BlockContext } from '../../context/BlockContext';
 import { Droppable } from 'react-beautiful-dnd';
 import { DroppableZone } from '../../constants/dragDrop';
-import { CommandKeyword, SERVER_URL, SocketStatus } from '../../constants/transcription';
+import { SERVER_URL, SocketStatus } from '../../constants/transcription';
 import { TranscriptionService, TranscriptionServiceConfig } from '../../services/TranscriptionService';
 import { BlockType } from '../../constants/block';
 import ListeningAnimation from '../ListeningAnimation';
+import { ThemeContext } from '@emotion/react';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -29,26 +29,32 @@ const StyledStackToolbar = styled(Stack)(({ theme }) => ({
   display: 'flex',
   alignItems: 'end',
   justifyContent: 'space-evenly',
-  width: '220px',
   transition: 'all .3s, transform .3s',
 }));
 
-const StyledStack = styled(Stack)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  width: '220px',
-  borderRadius: '25px',
-  backgroundColor: 'white',
-  transition: 'all .3s, transform .3s',
-}));
+const iconColor = (theme: Theme) => {
+  return theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800];
+  //return theme.palette.grey[100];
+};
+
+const toolbarPulseAnimation = {
+  animation: 'pulse-animation 2s 1',
+  '@keyframes pulse-animation': {
+    '0%': {
+      border: `solid rgba(255, 255, 255, 1)`,
+    },
+    '100%': {
+      border: `solid rgba(255, 255, 255, 0)`,
+    },
+  },
+};
 
 const StyledButton = styled(Button)(({ theme }) => ({
   maxWidth: '40px',
   minWidth: '40px',
   height: '40px',
   borderRadius: '50%',
-  backgroundColor: 'black',
-  color: 'white',
+  color: iconColor(theme),
   transition: 'all .3s, transform .3s',
   ':hover': { backgroundColor: 'gray' },
 }));
@@ -56,6 +62,26 @@ const StyledButton = styled(Button)(({ theme }) => ({
 const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
+
+const bgColor = (theme: Theme) => {
+  return theme.palette.mode === 'light' ? theme.palette.grey[900] : theme.palette.grey[100];
+};
+
+const iconHover = () => {
+  return {
+    backgroundColor: (theme: Theme) =>
+      theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800],
+    color: (theme: Theme) => (theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[100]),
+  };
+};
+
+const StyledStack = styled(Stack)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  borderRadius: '30px',
+  backgroundColor: bgColor(theme),
+  transition: 'all .3s, transform .3s',
+}));
 
 const Toolbar = () => {
   const [isListening, setIsListening] = React.useState(false);
@@ -67,10 +93,11 @@ const Toolbar = () => {
   const { blocks, setBlocks } = React.useContext(BlockContext);
 
   const [partialText, setPartialText] = React.useState('');
-  const [resultText, setResultText] = React.useState('');
   const [socketStatus, setSocketStatus] = React.useState<string>(SocketStatus.START);
   const [isReadOnly, setIsReadOnly] = React.useState<boolean>();
   const [isTranscriptionServiceRunning, setIsTranscriptionServiceRunning] = React.useState<boolean>(false);
+
+  const [isBlockBeingWritten, setIsBlockBeingWritten] = React.useState(false);
 
   const transcriptionServiceConfig: TranscriptionServiceConfig = {
     server: SERVER_URL,
@@ -89,9 +116,11 @@ const Toolbar = () => {
       setPartialText('');
       // addResult(result);
       setBlocks({ type: 'add', blockType: command, content: capitalizeFirstLetter(result) });
+      setIsBlockBeingWritten(false);
     },
     onCommand: (command: BlockType) => {
       console.log('ON COMMAND : ', command);
+      setIsBlockBeingWritten(true);
     },
     onPartialResults: (partial: any) => {
       console.log('ON PARTIAL : ', partial);
@@ -111,7 +140,6 @@ const Toolbar = () => {
   const startRecording = () => {
     setIsReadOnly(true);
     setSocketStatus(SocketStatus.LISTENING);
-    setResultText('');
     setPartialText('');
 
     if (!transcriptionService.isInitialized()) {
@@ -146,10 +174,6 @@ const Toolbar = () => {
     setIsReadOnly(false);
   };
 
-  const addResult = (result: string) => {
-    setResultText((prevResultText) => prevResultText + ' ' + result);
-  };
-
   const copyToClipboard = () => {
     const textToCopy = convertBlocksToMarkdown();
     navigator.clipboard.writeText(textToCopy);
@@ -179,7 +203,10 @@ const Toolbar = () => {
 
   return (
     <StyledBox>
-      <StyledStack direction={'column'} sx={{ height: isListening ? '150px' : '60px' }}>
+      <StyledStack
+        direction={'column'}
+        sx={{ height: isListening ? '150px' : '60px', ...(isBlockBeingWritten && toolbarPulseAnimation) }}
+      >
         <Box
           sx={{
             height: isListening ? '80px' : '0px',
@@ -195,14 +222,17 @@ const Toolbar = () => {
               transition: isListening ? 'all .5s' : 'all .1s',
             }}
           >
-            <Typography sx={{ marginTop: '10px', marginBottom: '15px', height: '24px' }}>
+            <Typography sx={{ marginTop: '10px', marginBottom: '15px', height: '24px', color: 'white' }}>
               {partialText ? partialText : <em>listening...</em>}
             </Typography>
 
             <ListeningAnimation />
           </Box>
         </Box>
-        <StyledStackToolbar direction={'row'} sx={{ paddingX: isListening ? '20px' : '0px' }}>
+        <StyledStackToolbar
+          direction={'row'}
+          sx={{ paddingX: isListening ? '20px' : '0px', width: isListening ? '220px' : '160px' }}
+        >
           <Droppable droppableId={DroppableZone.TRASH}>
             {(provided, snapshot) => (
               <StyledButton
@@ -220,9 +250,13 @@ const Toolbar = () => {
                     },
                   )
                 }
-                sx={{ ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.warning.main}` } }}
+                sx={{
+                  ':hover': {
+                    ...iconHover(),
+                  },
+                }}
               >
-                <BsTrash />
+                <BsFillTrashFill size={18} />
               </StyledButton>
             )}
           </Droppable>
@@ -244,18 +278,26 @@ const Toolbar = () => {
               height: isListening ? '50px' : '40px',
               width: isListening ? '50px' : '40px',
               maxWidth: isListening ? '50px' : '40px',
-              backgroundColor: (theme: Theme) => (isListening ? `${theme.palette.info.main}` : 'black'),
-              ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.info.main}` },
+              ...(isListening && {
+                ...iconHover(),
+              }),
+              ':hover': {
+                ...iconHover(),
+              },
             }}
           >
-            <BsMic />
+            <BsFillMicFill size={18} />
           </StyledButton>
           <StyledButton
             disabled={isListening}
             onClick={() => copyToClipboard()}
-            sx={{ ':hover': { backgroundColor: (theme: Theme) => `${theme.palette.success.main}` } }}
+            sx={{
+              ':hover': {
+                ...iconHover(),
+              },
+            }}
           >
-            <FiCopy />
+            <BsSubtract size={18} />
           </StyledButton>
         </StyledStackToolbar>
       </StyledStack>

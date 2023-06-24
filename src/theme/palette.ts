@@ -21,15 +21,15 @@ declare module '@mui/material/styles/createPalette' {
 // SETUP COLORS
 const GREY = {
   0: '#FFFFFF',
-  100: '#F9FAFB',
-  200: '#F4F6F8',
+  100: '#FDFDFD',
+  200: '#EDEBED',
   300: '#DFE3E8',
-  400: '#C1CBCE',
+  400: '#BCBCBC',
   500: '#919EAB',
   600: '#637381',
-  700: '#454F5B',
-  800: '#212B36',
-  900: '#161C24',
+  700: '#303030',
+  800: '#191919',
+  900: '#020202',
 } as const;
 
 const PRIMARY = {
@@ -116,7 +116,7 @@ export default function palette(themeMode: 'light' | 'dark') {
       secondary: GREY[600],
       disabled: GREY[500],
     },
-    background: { paper: '#fff', default: '#f2f7f8', neutral: GREY[200] },
+    background: { paper: '#fff', default: GREY[200], neutral: GREY[200] },
     action: {
       ...COMMON.action,
       active: GREY[600],
@@ -127,13 +127,13 @@ export default function palette(themeMode: 'light' | 'dark') {
     ...COMMON,
     mode: 'dark',
     text: {
-      primary: '#fff',
+      primary: GREY[100],
       secondary: GREY[500],
       disabled: GREY[600],
     },
     background: {
       paper: GREY[800],
-      default: '#151819',
+      default: GREY[800],
       neutral: alpha(GREY[500], 0.16),
     },
     action: {

@@ -24,7 +24,7 @@ const Dot = styled('div')(({ theme }) => ({
   borderRadius: '50%',
   webkitAnimation: 'dot-pulse2 1.5s ease-in-out infinite',
   animation: 'dot-pulse 1.5s ease-in-out infinite',
-  backgroundColor: '#f76002',
+  backgroundColor: theme.palette.grey[100],
   '@keyframes dot-pulse': {
     '0%': {
       webkitTransform: 'scale(0.5)',
