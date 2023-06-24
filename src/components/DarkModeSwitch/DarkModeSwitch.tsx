@@ -8,7 +8,7 @@ import { ThemeModeContext } from '../../context/ThemeModeContext/ThemeModeContex
 const StyledButton = styled('button')(() => ({
   position: 'absolute',
   width: '48px',
-  height: '24px',
+  height: '25px',
   padding: '0px',
   border: '0px',
   borderRadius: '24px',
@@ -25,7 +25,7 @@ const switchIconStyle = {
 
 const StyledRound = styled('div')(({ theme }) => ({
   position: 'absolute',
-  top: '10.3%',
+  top: '12%',
   left: '5.5%',
   width: '19px',
   height: '19px',
@@ -39,17 +39,27 @@ const DarkModeSwitch = () => {
 
   return (
     <StyledButton
+      sx={{
+        backgroundColor: (theme) => (theme.palette.mode === 'dark' ? 'white' : 'black'),
+      }}
       onClick={() => {
         colorMode.toggleColorMode();
       }}
     >
-      <StyledRound
-        sx={{
-          transform: (theme) => (theme.palette.mode === 'dark' ? 'translate(22.5px) scale(1.01, 1)' : 'translate(0px)'),
+      <HiSun
+        style={{
+          ...switchIconStyle,
+          left: '6px',
+          color: 'white',
         }}
       />
-      <HiSun style={{ ...switchIconStyle, left: '6px' }} />
-      <HiMoon style={{ ...switchIconStyle, right: '6px' }} />
+      <HiMoon style={{ ...switchIconStyle, right: '6px', color: 'black' }} />
+      <StyledRound
+        sx={{
+          transform: (theme) => (theme.palette.mode === 'light' ? 'translate(24px)' : 'translate(0px)'),
+          backgroundColor: (theme) => (theme.palette.mode === 'light' ? 'white' : 'black'),
+        }}
+      />
     </StyledButton>
   );
 };
