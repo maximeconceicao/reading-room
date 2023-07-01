@@ -9,9 +9,9 @@ import { Droppable } from 'react-beautiful-dnd';
 import { DroppableZone } from '../../constants/dragDrop';
 import { SERVER_URL, SocketStatus } from '../../constants/transcription';
 import { TranscriptionService, TranscriptionServiceConfig } from '../../services/TranscriptionService';
-import { BlockType } from '../../constants/block';
+import { BlockType } from '../../constants/transcription';
 import ListeningAnimation from '../ListeningAnimation';
-import { ThemeContext } from '@emotion/react';
+import * as Tone from 'tone';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -83,6 +83,18 @@ const StyledStack = styled(Stack)(({ theme }) => ({
   transition: 'all .3s, transform .3s',
 }));
 
+const synth = new Tone.Synth({
+  oscillator: {
+    type: 'sine',
+  },
+  envelope: {
+    attack: 0.2,
+    decay: 0.4,
+    sustain: 0.6,
+    release: 1,
+  },
+}).toDestination();
+
 const Toolbar = () => {
   const [isListening, setIsListening] = React.useState(false);
 
@@ -117,9 +129,13 @@ const Toolbar = () => {
       // addResult(result);
       setBlocks({ type: 'add', blockType: command, content: capitalizeFirstLetter(result) });
       setIsBlockBeingWritten(false);
+      const now = Tone.now();
+      synth.triggerAttackRelease('D4', '8n', now);
+      synth.triggerAttackRelease('G4', '8n', now + 0.1);
     },
     onCommand: (command: BlockType) => {
       console.log('ON COMMAND : ', command);
+      synth.triggerAttackRelease('D4', '8n');
       setIsBlockBeingWritten(true);
     },
     onPartialResults: (partial: any) => {

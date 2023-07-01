@@ -4,7 +4,7 @@ import { BsPlusLg } from 'react-icons/bs';
 import { RxDragHandleDots2 } from 'react-icons/rx';
 import { DraggableProvidedDraggableProps, DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import BlockSelectionPopover from '../BlockSelectionPopover';
-import { BlockType } from '../../constants/block';
+import { BlockType } from '../../constants/transcription';
 import { BlockContext } from '../../context/BlockContext';
 import { Box, Theme, useTheme } from '@mui/material';
 import { ThemeMode } from '../../constants/theme';

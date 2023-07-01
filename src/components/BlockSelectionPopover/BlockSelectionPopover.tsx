@@ -3,7 +3,7 @@ import { Box, color, Container, Stack, styled } from '@mui/system';
 
 import { BsQuote, BsTypeH1, BsTypeH2, BsType } from 'react-icons/bs';
 import { Button, Popover, PopoverOrigin, Typography } from '@mui/material';
-import { BlockType } from '../../constants/block';
+import { BlockType } from '../../constants/transcription';
 import { IconContext } from 'react-icons';
 import { BlockContext } from '../../context/BlockContext';
 

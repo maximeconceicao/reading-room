@@ -7,7 +7,7 @@
 
 ## What is Reading Room ?
 
-Reading Room is a WebSocket client intended to be used with the open-source Vosk Server from Alpha Cephei.
+Reading Room is a **WebSocket client** intended to be used with the open-source Vosk Server from Alpha Cephei.
 The main idea of this project is to allow taking notes while reading a book, without having to even put it down to write them.
 After starting a "reading session" by clicking on the microphone button, the app will listen to the incoming audio stream, and thanks to a set of preconfigured commands we will be able to tell it what type of note we want to take (title, excerpt, quote...), and the app will take care of listening and directly transcribing the content into a new text block. At the end of the session, we can adjust our notes, reorganize them, and finally export them in markdown format by clicking on the copy button.
 
@@ -65,3 +65,4 @@ This project uses the following open source tools:
 - [MUI](https://mui.com/)
 - [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd)
 - [Iconify](https://iconify.design/)
+- [Tone.js](https://tonejs.github.io/)

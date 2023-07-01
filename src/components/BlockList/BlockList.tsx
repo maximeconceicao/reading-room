@@ -3,7 +3,7 @@ import { Container, Stack } from '@mui/system';
 import { styled } from '@mui/material/styles';
 import Block from '../Block';
 import { Droppable, Draggable, NotDraggingStyle, DraggingStyle } from 'react-beautiful-dnd';
-import { BlockType } from '../../constants/block';
+import { BlockType } from '../../constants/transcription';
 import { BlockContext } from '../../context/BlockContext';
 import { CircularProgress } from '@mui/material';
 import { DroppableZone } from '../../constants/dragDrop';
