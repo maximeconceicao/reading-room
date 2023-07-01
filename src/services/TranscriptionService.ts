@@ -1,4 +1,4 @@
-import { BlockType } from './../constants/block';
+import { BlockType } from './../constants/transcription';
 import {
   INPUT_SAMPLE_RATE,
   OUTPUT_SAMPLE_RATE,

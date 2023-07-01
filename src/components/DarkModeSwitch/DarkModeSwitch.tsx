@@ -56,7 +56,7 @@ const DarkModeSwitch = () => {
       <HiMoon style={{ ...switchIconStyle, right: '6px', color: 'black' }} />
       <StyledRound
         sx={{
-          transform: (theme) => (theme.palette.mode === 'light' ? 'translate(24px)' : 'translate(0px)'),
+          transform: (theme) => (theme.palette.mode === 'light' ? 'translate(22px)' : 'translate(0px)'),
           backgroundColor: (theme) => (theme.palette.mode === 'light' ? 'white' : 'black'),
         }}
       />

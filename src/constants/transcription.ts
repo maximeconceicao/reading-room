@@ -20,3 +20,10 @@ export enum CommandKeyword {
   QUOTE = 'citation',
   NOTE = 'note',
 }
+
+export enum BlockType {
+  TITLE = 'titre',
+  SUBTITLE = 'sous-titre',
+  QUOTE = 'citation',
+  NOTE = 'note',
+}

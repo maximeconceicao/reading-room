@@ -1,4 +1,4 @@
-import { BlockType } from '../constants/block';
+import { BlockType } from '../constants/transcription';
 
 export type Block = {
   id: string;
