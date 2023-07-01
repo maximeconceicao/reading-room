@@ -18,16 +18,18 @@ After starting a "reading session" by clicking on the microphone button, the app
 This project is designed to work with the [Vosk Server](https://github.com/alphacep/vosk-server)
 You can install and start the server using
 
-````
+```
+
 docker run -d -p 2700:2700 alphacep/kaldi-fr:latest
 ```
+
 Here, **kaldi-fr** refers to the French language recognition model, but other languages ​​are available on [Docker Hub](https://hub.docker.com/u/alphacep)
 
 ### Installing
 
 - Install the dependencies
 
-````
+```
 
 npm install
 
@@ -47,13 +49,12 @@ npm run dev
 
 If you ever want to bring some customization, here are the main constants of the file **transcription.ts** :
 
-Name | Default value | Description |
-|---|---|---|
-| SERVER_URL | ws://localhost:2700 | The url of the WebSocket server which transcribes |
-| INPUT_SAMPLE_RATE | 48000 | The sampling frequency of your audio input, may need to be modified if you encounter transcription problems |
-| BlockType | titre, sous-titre, citation, note | The different styles of blocks that can be added |
-| CommandKeyword | titre, sous-titre, citation, note | Commands that trigger the writing of a block. Its values ​​are the same as BlockType, but it is entirely possible to implement other commands to, for example, delete the last block, copy the content, etc |
-
+| Name              | Default value                     | Description                                                                                                                                                                                                 |
+| ----------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SERVER_URL        | ws://localhost:2700               | The url of the WebSocket server which transcribes                                                                                                                                                           |
+| INPUT_SAMPLE_RATE | 48000                             | The sampling frequency of your audio input, may need to be modified if you encounter transcription problems                                                                                                 |
+| BlockType         | titre, sous-titre, citation, note | The different styles of blocks that can be added                                                                                                                                                            |
+| CommandKeyword    | titre, sous-titre, citation, note | Commands that trigger the writing of a block. Its values ​​are the same as BlockType, but it is entirely possible to implement other commands to, for example, delete the last block, copy the content, etc |
 
 ## Credits
 
@@ -77,7 +78,8 @@ This project uses the following open source tools:
 
 ### START THE SERVER
 
-
-
 https://stackoverflow.com/questions/30031561/change-sample-rate-of-audiocontext-getusermedia
+
+```
+
 ```
