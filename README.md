@@ -15,8 +15,8 @@ After starting a "reading session" by clicking on the microphone button, the app
 
 ### Dependencies
 
-This project is designed to work with the [Vosk Server](https://github.com/alphacep/vosk-server)
-You can install and start the server using
+- This project is designed to work with the [Vosk Server](https://github.com/alphacep/vosk-server).
+  You can install and start the server using
 
 ```
 
@@ -65,21 +65,3 @@ This project uses the following open source tools:
 - [MUI](https://mui.com/)
 - [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd)
 - [Iconify](https://iconify.design/)
-
-### YOU HAVE TWO FILES
-
-- `live-transcribe-vue/src/services/dictate-service.js`
-  - const INTERVAL = 500; // send binary data every .5 second
-  - fromSampleRate: 44000 and you don't need to change it
-  - you got binary data from `initWorker()` inside this function we call `socketSend(blob)` to send binary data to socket in dictate-service.js
-  - we send 16000 binary data to engine through socket.
-- `live-transcribe-vue/src/services/endpoint.js`
-  - you can change socket and save endpoint through endpoint.js file via `socketBaseURL`and `modifying` properties.
-
-### START THE SERVER
-
-https://stackoverflow.com/questions/30031561/change-sample-rate-of-audiocontext-getusermedia
-
-```
-
-```
