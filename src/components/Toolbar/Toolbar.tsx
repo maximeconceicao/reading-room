@@ -32,19 +32,14 @@ const StyledStackToolbar = styled(Stack)(({ theme }) => ({
   transition: 'all .3s, transform .3s',
 }));
 
-const iconColor = (theme: Theme) => {
-  return theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800];
-  //return theme.palette.grey[100];
-};
-
 const toolbarPulseAnimation = {
   animation: 'pulse-animation 2s 1',
   '@keyframes pulse-animation': {
     '0%': {
-      border: `solid rgba(255, 255, 255, 1)`,
+      boxShadow: '0 0 0 0px rgba(0, 0, 0, 0.2)',
     },
     '100%': {
-      border: `solid rgba(255, 255, 255, 0)`,
+      boxShadow: '0 0 0 20px rgba(0, 0, 0, 0)',
     },
   },
 };
@@ -54,7 +49,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   minWidth: '40px',
   height: '40px',
   borderRadius: '50%',
-  color: iconColor(theme),
+  color: theme.palette.toolbar.color,
   transition: 'all .3s, transform .3s',
   ':hover': { backgroundColor: 'gray' },
 }));
@@ -63,15 +58,10 @@ const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-const bgColor = (theme: Theme) => {
-  return theme.palette.mode === 'light' ? theme.palette.grey[900] : theme.palette.grey[100];
-};
-
 const iconHover = () => {
   return {
-    backgroundColor: (theme: Theme) =>
-      theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800],
-    color: (theme: Theme) => (theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[100]),
+    backgroundColor: (theme: Theme) => theme.palette.toolbar.backgroundHover,
+    color: (theme: Theme) => theme.palette.toolbar.iconHover,
   };
 };
 
@@ -79,7 +69,7 @@ const StyledStack = styled(Stack)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   borderRadius: '30px',
-  backgroundColor: bgColor(theme),
+  backgroundColor: theme.palette.toolbar.background,
   transition: 'all .3s, transform .3s',
 }));
 
@@ -126,9 +116,12 @@ const Toolbar = () => {
     onResults: (command: BlockType, result: string) => {
       console.log('ON RESULTS : ', result, command);
       setPartialText('');
-      // addResult(result);
       setBlocks({ type: 'add', blockType: command, content: capitalizeFirstLetter(result) });
       setIsBlockBeingWritten(false);
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth', // Ajoute une animation de défilement fluide
+      });
       const now = Tone.now();
       synth.triggerAttackRelease('D4', '8n', now);
       synth.triggerAttackRelease('G4', '8n', now + 0.1);
@@ -173,6 +166,7 @@ const Toolbar = () => {
     if (socketStatus === SocketStatus.LISTENING) {
       transcriptionService.pause();
       setSocketStatus(SocketStatus.PAUSE);
+      //setIsBlockBeingWritten(false);
     }
   };
 
@@ -193,7 +187,7 @@ const Toolbar = () => {
   const copyToClipboard = () => {
     const textToCopy = convertBlocksToMarkdown();
     navigator.clipboard.writeText(textToCopy);
-    enqueueSnackbar('Notes copied to Clipboard !', { variant: 'info' });
+    enqueueSnackbar('Notes copied to Clipboard !');
   };
 
   const convertBlocksToMarkdown = () => {
@@ -258,7 +252,7 @@ const Toolbar = () => {
                 disabled={isListening}
                 onClick={() =>
                   openSimpleDialog(
-                    '/!\\',
+                    <BsFillTrashFill size={18} />,
                     'Are you sure you want to delete all of your notes?',
                     () => {},
                     () => {

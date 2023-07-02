@@ -2,8 +2,6 @@ import { alpha } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export type ColorSchema = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
-
 declare module '@mui/material/styles/createPalette' {
   interface TypeBackground {
     neutral: string;
@@ -32,68 +30,8 @@ const GREY = {
   900: '#020202',
 } as const;
 
-const PRIMARY = {
-  lighter: '#85979D',
-  light: '#526C74',
-  main: '#153843',
-  dark: '#112d36',
-  darker: '#0b1c22',
-  contrastText: '#fff',
-} as const;
-
-const SECONDARY = {
-  lighter: '#fab3a7',
-  light: '#f68572',
-  main: '#F4664F',
-  dark: '#c3523f',
-  darker: '#7a3328',
-  contrastText: '#fff',
-} as const;
-
-const INFO = {
-  lighter: '#C2FDFF',
-  light: '#5CFAFF',
-  main: '#47b8f7',
-  dark: '#006366',
-  darker: '#003B3D',
-  contrastText: '#fff',
-} as const;
-
-const SUCCESS = {
-  lighter: '#DFF6EC',
-  light: '#8FE0BC',
-  main: '#84B082',
-  dark: '#1A6041',
-  darker: '#092016',
-  contrastText: '#fff',
-} as const;
-
-const WARNING = {
-  lighter: '#FDEDED',
-  light: '#F7B6B6',
-  main: '#E93535',
-  dark: '#B81414',
-  darker: '#810E0E',
-  contrastText: GREY[800],
-} as const;
-
-const ERROR = {
-  lighter: '#FEECED',
-  light: '#FBB1B6',
-  main: '#F51F2C',
-  dark: '#AF0813',
-  darker: '#75060D',
-  contrastText: '#fff',
-} as const;
-
 const COMMON = {
   common: { black: '#000', white: '#fff' },
-  primary: PRIMARY,
-  secondary: SECONDARY,
-  info: INFO,
-  success: SUCCESS,
-  warning: WARNING,
-  error: ERROR,
   grey: GREY,
   divider: alpha(GREY[500], 0.24),
   action: {
@@ -121,6 +59,27 @@ export default function palette(themeMode: 'light' | 'dark') {
       ...COMMON.action,
       active: GREY[600],
     },
+    block: {
+      background: GREY[100],
+    },
+    toolbar: {
+      color: GREY[100],
+      background: GREY[900],
+      iconHover: GREY[900],
+      backgroundHover: GREY[100],
+    },
+    snackbar: {
+      background: GREY[900],
+      icon: GREY[100],
+    },
+    toggle: {
+      icon: GREY[100],
+      background: GREY[800],
+    },
+    dialog: {
+      color: GREY[100],
+      background: GREY[900],
+    },
   } as const;
 
   const dark = {
@@ -139,6 +98,27 @@ export default function palette(themeMode: 'light' | 'dark') {
     action: {
       ...COMMON.action,
       active: GREY[500],
+    },
+    block: {
+      background: GREY[700],
+    },
+    toolbar: {
+      color: GREY[800],
+      background: GREY[100],
+      iconHover: GREY[100],
+      backgroundHover: GREY[800],
+    },
+    snackbar: {
+      background: GREY[100],
+      icon: GREY[800],
+    },
+    toggle: {
+      icon: GREY[800],
+      background: GREY[100],
+    },
+    dialog: {
+      color: GREY[800],
+      background: GREY[100],
     },
   } as const;
 

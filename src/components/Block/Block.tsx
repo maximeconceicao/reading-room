@@ -6,8 +6,8 @@ import { DraggableProvidedDraggableProps, DraggableProvidedDragHandleProps } fro
 import BlockSelectionPopover from '../BlockSelectionPopover';
 import { BlockType } from '../../constants/transcription';
 import { BlockContext } from '../../context/BlockContext';
-import { Box, Theme, useTheme } from '@mui/material';
-import { ThemeMode } from '../../constants/theme';
+import { Box } from '@mui/material';
+import { Theme } from '@mui/system';
 
 interface BlockProps {
   type: BlockType;
@@ -47,8 +47,6 @@ const getStyleByBlockType = (blockType: BlockType) => {
 const Block = (props: BlockProps) => {
   const { type, isDragging, index, style } = props;
 
-  const theme = useTheme();
-
   const { setBlocks } = React.useContext(BlockContext);
 
   const [isHovered, setIsHovered] = React.useState(false);
@@ -82,29 +80,6 @@ const Block = (props: BlockProps) => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover-' + index : undefined;
-
-  React.useEffect(() => {
-    if (blockRef.current) {
-      blockRef.current.focus();
-    }
-  }, []);
-
-  const getBlockStyleByThemeMode = (themeMode: ThemeMode) => {
-    const style = { width: '100%', padding: '10px', borderRadius: '0px' };
-    if (themeMode === 'dark') {
-      return {
-        ...style,
-        backgroundColor: theme.palette.grey[700],
-        // border: theme.palette.grey[100] + ' 1px solid',
-      };
-    } else {
-      return {
-        ...style,
-        backgroundColor: theme.palette.grey[100],
-        //border: theme.palette.grey[800] + ' 1px solid',
-      };
-    }
-  };
 
   return (
     <div ref={props.innerRef} {...props.draggableProps} style={style}>
@@ -154,8 +129,10 @@ const Block = (props: BlockProps) => {
           <Box
             ref={blockRef}
             sx={{
-              ...getBlockStyleByThemeMode(theme.palette.mode),
-
+              width: '100%',
+              padding: '10px',
+              borderRadius: '0px',
+              backgroundColor: (theme: Theme) => theme.palette.block.background,
               ...getStyleByBlockType(type),
               opacity: isDragging ? '0.5' : '1',
             }}

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { HiSun, HiMoon } from 'react-icons/hi';
 import { ThemeModeContext } from '../../context/ThemeModeContext/ThemeModeContext';
+import { Theme } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ const DarkModeSwitch = () => {
   return (
     <StyledButton
       sx={{
-        backgroundColor: (theme) => (theme.palette.mode === 'dark' ? 'white' : 'black'),
+        backgroundColor: (theme: Theme) => theme.palette.toggle.background,
       }}
       onClick={() => {
         colorMode.toggleColorMode();
@@ -50,14 +51,14 @@ const DarkModeSwitch = () => {
         style={{
           ...switchIconStyle,
           left: '6px',
-          color: 'white',
+          color: '#FDFDFD',
         }}
       />
-      <HiMoon style={{ ...switchIconStyle, right: '6px', color: 'black' }} />
+      <HiMoon style={{ ...switchIconStyle, right: '6px', color: '#191919' }} />
       <StyledRound
         sx={{
-          transform: (theme) => (theme.palette.mode === 'light' ? 'translate(22px)' : 'translate(0px)'),
-          backgroundColor: (theme) => (theme.palette.mode === 'light' ? 'white' : 'black'),
+          transform: (theme: Theme) => (theme.palette.mode === 'light' ? 'translate(25px)' : 'translate(0px)'),
+          backgroundColor: (theme: Theme) => theme.palette.toggle.icon,
         }}
       />
     </StyledButton>

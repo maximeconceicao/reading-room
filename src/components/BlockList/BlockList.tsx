@@ -3,7 +3,6 @@ import { Container, Stack } from '@mui/system';
 import { styled } from '@mui/material/styles';
 import Block from '../Block';
 import { Droppable, Draggable, NotDraggingStyle, DraggingStyle } from 'react-beautiful-dnd';
-import { BlockType } from '../../constants/transcription';
 import { BlockContext } from '../../context/BlockContext';
 import { CircularProgress } from '@mui/material';
 import { DroppableZone } from '../../constants/dragDrop';
@@ -40,7 +39,7 @@ const BlockList = () => {
   const { blocks } = React.useContext(BlockContext);
 
   return (
-    <Container>
+    <Container sx={{ paddingBottom: '300px' }}>
       {blocks ? (
         <StyledStack direction="column" alignItems="center" justifyContent="space-between">
           <Droppable droppableId={DroppableZone.BLOCK_LIST}>

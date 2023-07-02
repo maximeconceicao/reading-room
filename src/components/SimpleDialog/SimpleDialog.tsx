@@ -9,6 +9,7 @@ import {
   IconButton,
 } from '@mui/material';
 import Iconify from '../Iconify';
+import { Theme, useTheme } from '@mui/system';
 
 type SimpleDialogProps = {
   dialogTitle: string;
@@ -18,14 +19,16 @@ type SimpleDialogProps = {
   handleConfirm?: () => void;
 };
 
-const StyledButton = styled(Button)(({ theme }) => ({
+const StyledButton = styled(Button)(({ theme }: { theme: Theme }) => ({
   width: '130px',
   fontWeight: 'bold',
   fontSize: '15px',
+  color: theme.palette.dialog.color,
 }));
 
 function SimpleDialog(props: SimpleDialogProps) {
   const { dialogTitle, dialogContentText, isOpen, handleClose, handleConfirm } = props;
+  const theme = useTheme();
 
   return (
     <Dialog
@@ -33,7 +36,11 @@ function SimpleDialog(props: SimpleDialogProps) {
       onClose={handleClose}
       sx={{ textAlign: 'center', margin: 'auto' }}
       PaperProps={{
-        style: { borderRadius: 25 },
+        style: {
+          borderRadius: 25,
+          backgroundColor: theme.palette.dialog.background,
+          color: theme.palette.dialog.color,
+        },
       }}
     >
       <DialogTitle>
@@ -41,7 +48,7 @@ function SimpleDialog(props: SimpleDialogProps) {
           aria-label="close"
           onClick={handleClose}
           sx={{
-            color: '#212B36',
+            color: (theme: Theme) => theme.palette.dialog.icon,
             position: 'absolute',
             right: 15,
             top: 10,
@@ -55,7 +62,11 @@ function SimpleDialog(props: SimpleDialogProps) {
         {dialogTitle}
       </DialogTitle>
       <DialogContent sx={{ width: '400px' }}>
-        <DialogContentText sx={{ wordWrap: 'break-word', fontSize: '14px' }}>{dialogContentText}</DialogContentText>
+        <DialogContentText
+          sx={{ wordWrap: 'break-word', fontSize: '14px', color: (theme: Theme) => theme.palette.dialog.color }}
+        >
+          {dialogContentText}
+        </DialogContentText>
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center', marginBottom: 2 }}>
@@ -63,7 +74,7 @@ function SimpleDialog(props: SimpleDialogProps) {
           Cancel
         </StyledButton>
         <StyledButton
-          variant="contained"
+          variant="outlined"
           color="warning"
           onClick={() => {
             if (typeof handleConfirm === 'function') {

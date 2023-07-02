@@ -3,9 +3,11 @@ import * as React from 'react';
 import { SnackbarProvider as NotistackProvider, SnackbarKey } from 'notistack';
 import { IconButton, Collapse, Box } from '@mui/material';
 import Iconify, { IconifyProps } from '../../components/Iconify';
-import { alpha } from '@mui/material/styles';
+import { Theme, useTheme } from '@mui/system';
 
 const SnackbarProvider = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
+
   const notistackRef = React.useRef<any>(null);
 
   const onClose = (key: SnackbarKey) => () => {
@@ -15,6 +17,11 @@ const SnackbarProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <NotistackProvider
       ref={notistackRef}
+      style={{
+        backgroundColor: theme.palette.snackbar.background,
+        fontWeight: 800,
+        color: theme.palette.snackbar.icon,
+      }}
       dense
       maxSnack={3}
       preventDuplicate
@@ -23,15 +30,12 @@ const SnackbarProvider = ({ children }: { children: React.ReactNode }) => {
       variant="success" // Set default variant
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       iconVariant={{
-        info: <SnackbarIcon icon="eva:info-fill" color="info" />,
-        success: <SnackbarIcon icon="eva:checkmark-circle-2-fill" color="success" />,
-        warning: <SnackbarIcon icon="eva:alert-triangle-fill" color="warning" />,
-        error: <SnackbarIcon icon="eva:alert-circle-fill" color="error" />,
+        success: <SnackbarIcon icon="eva:checkmark-circle-2-fill" color={theme.palette.snackbar.background} />,
       }}
       // With close as default
       action={(key) => (
-        <IconButton size="small" onClick={onClose(key)} sx={{ p: 0.5 }}>
-          <Iconify icon="eva:close-fill" />
+        <IconButton size="small" onClick={onClose(key)} sx={{ p: 0.5, opacity: 0.6 }}>
+          <Iconify icon="eva:close-fill" color={theme.palette.snackbar.icon} />
         </IconButton>
       )}
     >
@@ -42,7 +46,7 @@ const SnackbarProvider = ({ children }: { children: React.ReactNode }) => {
 
 type SnackbarIconProps = {
   icon: IconifyProps;
-  color: 'info' | 'success' | 'warning' | 'error';
+  color: 'success';
 };
 
 function SnackbarIcon({ icon, color }: SnackbarIconProps) {
@@ -58,7 +62,7 @@ function SnackbarIcon({ icon, color }: SnackbarIconProps) {
         alignItems: 'center',
         justifyContent: 'center',
         color: `${color}.main`,
-        bgcolor: (theme) => alpha(theme.palette[color].main, 0.16),
+        bgcolor: (theme: Theme) => theme.palette.snackbar.background,
       }}
     >
       <Iconify icon={icon} width={24} />

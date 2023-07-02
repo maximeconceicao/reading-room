@@ -1,7 +1,4 @@
-import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import { useTheme } from '@mui/material/styles';
-import { ThemeModeContext } from '../../context/ThemeModeContext/ThemeModeContext';
 
 // ----------------------------------------------------------------------
 
@@ -45,9 +42,6 @@ const Dot = styled('div')(({ theme }) => ({
 }));
 
 const ListeningAnimation = () => {
-  const theme = useTheme();
-  const colorMode = React.useContext(ThemeModeContext);
-
   return (
     <Loader>
       <Dot sx={{ animationDelay: '0s', WebkitAnimationDelay: '0s' }} />

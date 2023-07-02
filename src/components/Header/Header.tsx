@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 
 const Header = () => {
   return (
-    <Container sx={{ fontSize: '1rem' }}>
+    <Container sx={{ fontSize: '1rem', position: 'sticky', top: 0, zIndex: 100 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" paddingY={2} height="70px">
         <Box sx={{ display: 'flex' }}>
           <BsBookmarkHeartFill size={32} />
